@@ -3,358 +3,870 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CleanConfirm - Booking Management</title>
+    <title>CLEANCONFIRM - Customer Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --cleaning-color: #3498db;
+            --completed-color: #2ecc71;
+            --pending-color: #f39c12;
+            --available-color: #2ecc71;
+            --booked-color: #e74c3c;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin: 0;
+            padding: 0;
             color: #333;
-            line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 15px 30px;
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.8rem;
         }
         
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        
-        .logo {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
-        
-        .app-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .app-description {
-            font-size: 16px;
-            opacity: 0.9;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
         }
         
         .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            padding: 20px;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+        
+        .card-body {
             padding: 25px;
         }
         
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 12px 0;
-            text-align: center;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-        
         .btn-primary {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            color: white;
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 8px;
         }
         
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        input {
-            width: 100%;
-            padding: 18px;
-            border: 2px solid #ddd;
+        .login-container {
+            max-width: 450px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
             border-radius: 12px;
-            font-size: 18px;
-            background-color: #f8f9fa;
-            transition: border-color 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        input:focus {
-            border-color: #4CAF50;
-            outline: none;
+        .form-control {
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            transition: all 0.3s;
         }
         
-        .hidden {
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .content-section {
             display: none;
         }
         
-        .success-message {
+        .content-section.active {
+            display: block;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        
+        .calendar-day {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 150px;
+            background-color: white;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .day-header {
             text-align: center;
-            padding: 30px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            color: var(--dark-color);
         }
         
-        .icon-large {
-            font-size: 60px;
-            color: #4CAF50;
-            margin-bottom: 20px;
+        .other-month {
+            background-color: #f8f9fa;
+            color: #6c757d;
         }
         
-        .booking-info {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
+        .current-day {
+            background-color: #e8f4fc;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .time-slot {
+            font-size: 0.8rem;
+            padding: 6px 8px;
+            border-radius: 5px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .time-available {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 3px solid var(--available-color);
+        }
+        
+        .time-booked {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 3px solid var(--booked-color);
+        }
+        
+        .time-selected {
+            background-color: rgba(52, 152, 219, 0.3);
+            border-left: 3px solid var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .booking-history {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .booking-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: white;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .booking-completed {
+            border-left: 4px solid var(--completed-color);
+        }
+        
+        .booking-pending {
+            border-left: 4px solid var(--pending-color);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .user-menu img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            padding: 15px 25px;
+            color: var(--dark-color);
+            font-weight: 600;
+            border-radius: 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--secondary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            background: transparent;
+        }
+        
+        .demo-credentials {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .qr-code {
+            text-align: center;
             margin: 20px 0;
         }
         
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+        .qr-code img {
+            max-width: 180px;
+            border: 10px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        
-        .status-pending {
-            background: #ffecb3;
-            color: #ff8f00;
-        }
-        
-        .status-confirmed {
-            background: #c8e6c9;
-            color: #2e7d32;
-        }
-        
-        .demo-codes {
-            text-align: center;
-            margin-top: 30px;
+        .notification-preferences {
+            background-color: white;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            font-size: 14px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
         
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
+        .form-check-input:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: repeat(1, 1fr);
             }
             
-            .card {
+            .container {
+                padding: 15px;
+            }
+            
+            .login-container {
+                margin: 30px 15px;
                 padding: 20px;
-            }
-            
-            .btn {
-                padding: 16px;
-                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-broom"></i>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <span class="navbar-brand">CLEANCONFIRM</span>
+            <div class="user-menu">
+                <span id="userName">Customer</span>
+                <img src="https://ui-avatars.com/api/?name=Customer&background=3498db&color=fff" alt="Customer" id="userAvatar">
             </div>
-            <div class="app-name">CLEANCONFIRM</div>
-            <div class="app-description">Professional Cleaning Booking System</div>
-        </header>
-        
-        <div class="card">
-            <div id="login-section">
-                <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-calendar-check"></i> Access Your Booking</h2>
-                <p style="text-align: center; margin-bottom: 20px;">Enter your email or booking reference</p>
-                
-                <div class="form-group">
-                    <input type="text" id="client-email" placeholder="your@email.com or booking code">
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <div class="content-section active" id="login-section">
+        <div class="login-container">
+            <h2 class="text-center mb-4">Access Your Account</h2>
+            <p class="text-center text-muted">Enter your email and password to access the booking system</p>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
                 </div>
                 
-                <button class="btn btn-primary" onclick="checkAppointment()">
-                    <i class="fas fa-sign-in-alt"></i> Access My Booking
-                </button>
-                
-                <div class="demo-codes">
-                    <p style="margin-bottom: 15px; font-weight: bold;">Demo Access Codes:</p>
-                    <p><strong>Email:</strong> client@email.com</p>
-                    <p><strong>Code:</strong> 123456</p>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Your password" required>
                 </div>
                 
-                <div style="text-align: center; margin-top: 30px;">
-                    <p style="margin-bottom: 15px;">Or scan the QR code</p>
-                    <div style="background: #f0f0f0; padding: 15px; border-radius: 12px; display: inline-block;">
-                        <i class="fas fa-qrcode" style="font-size: 80px; color: #4CAF50;"></i>
-                    </div>
+                <button type="submit" class="btn btn-primary w-100">Access My Account</button>
+                
+                <div class="text-center mt-3">
+                    <a href="#" id="registerLink">Don't have an account? Register</a>
                 </div>
+            </form>
+            
+            <div class="demo-credentials">
+                <h6><i class="fas fa-key"></i> Demo Access:</h6>
+                <p class="mb-1">Email: <strong>customer@email.com</strong></p>
+                <p>Password: <strong>123456</strong></p>
             </div>
             
-            <div id="appointment-details" class="hidden">
-                <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-calendar-alt"></i> Your Booking Details</h2>
+            <div class="qr-code">
+                <p>Or scan the QR code</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://cleanconfirm.com/app" alt="QR Code">
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Section -->
+    <div class="content-section" id="register-section">
+        <div class="login-container">
+            <h2 class="text-center mb-4">Create Account</h2>
+            <p class="text-center text-muted">Create your account to schedule cleaning services</p>
+            
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="regName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="regName" placeholder="Your full name" required>
+                </div>
                 
-                <div class="booking-info">
-                    <div class="info-item">
-                        <span>Client:</span>
-                        <span id="client-name">Sarah Johnson</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Address:</span>
-                        <span id="client-address">123 Main Street, Auckland</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Date:</span>
-                        <span id="current-date">15/10/2023</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Time:</span>
-                        <span id="current-time">14:00</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Status:</span>
-                        <span id="current-status" class="status status-pending">Pending</span>
+                <div class="mb-3">
+                    <label for="regEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="regEmail" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="regPhone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="regPhone" placeholder="(123) 456-7890" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="regPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="regPassword" placeholder="Create a password" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="regConfirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="smsReminders" checked>
+                    <label class="form-check-label" for="smsReminders">
+                        Send me SMS reminders one day before my cleaning
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                
+                <div class="text-center mt-3">
+                    <a href="#" id="loginLink">Already have an account? Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div class="content-section" id="dashboard-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Welcome, <span id="clientName">Customer</span></h2>
+                <button class="btn btn-outline-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="booking-tab" data-bs-toggle="tab" data-bs-target="#booking" type="button" role="tab">Schedule Cleaning</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Cleaning History</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">Notification Settings</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="booking" role="tabpanel">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="far fa-calendar-alt me-2"></i> Booking Calendar
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 id="current-month">September 2025</h4>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="next-month"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="calendar-grid" id="calendar-container">
+                                <!-- Calendar will be generated by JavaScript -->
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5>Available Time Slots</h5>
+                                <div id="time-slots" class="d-flex flex-wrap gap-2 mt-3">
+                                    <!-- Time slots will be generated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4" id="booking-form" style="display: none;">
+                                <h5>Confirm Booking</h5>
+                                <form id="confirmBookingForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Date</label>
+                                                <input type="text" class="form-control" id="booking-date" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Time</label>
+                                                <input type="text" class="form-control" id="booking-time" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="booking-notes" class="form-label">Special Instructions</label>
+                                        <textarea class="form-control" id="booking-notes" rows="3" placeholder="Any special instructions for the cleaning?"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="booking-sms-reminder" checked>
+                                        <label class="form-check-label" for="booking-sms-reminder">
+                                            Send me an SMS reminder one day before cleaning
+                                        </label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <button class="btn btn-primary" onclick="confirmAppointment()">
-                    <i class="fas fa-check-circle"></i> Confirm Booking
-                </button>
+                <div class="tab-pane fade" id="history" role="tabpanel">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="fas fa-history me-2"></i> Cleaning History
+                        </div>
+                        <div class="card-body">
+                            <div class="booking-history" id="booking-history">
+                                <!-- Booking history will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
-                <button class="btn btn-primary" onclick="showLogin()" style="background: #6c757d;">
-                    <i class="fas fa-arrow-left"></i> Back to Login
-                </button>
-            </div>
-            
-            <div id="confirmation-section" class="hidden">
-                <div class="success-message">
-                    <div class="icon-large">
-                        <i class="fas fa-check-circle"></i>
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="fas fa-bell me-2"></i> Notification Preferences
+                        </div>
+                        <div class="card-body">
+                            <div class="notification-preferences">
+                                <h5>SMS Notifications</h5>
+                                <p class="text-muted">Manage how we contact you about your appointments</p>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sms-reminders" checked>
+                                    <label class="form-check-label" for="sms-reminders">
+                                        Send SMS reminders one day before cleaning appointments
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sms-confirmations" checked>
+                                    <label class="form-check-label" for="sms-confirmations">
+                                        Send booking confirmation via SMS
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sms-changes">
+                                    <label class="form-check-label" for="sms-changes">
+                                        Notify me via SMS about schedule changes
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number for SMS</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" placeholder="(123) 456-7890" value="(555) 123-4567">
+                                </div>
+                                
+                                <button class="btn btn-primary" id="savePreferences">Save Preferences</button>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5>Test SMS Notification</h5>
+                                <p class="text-muted">Send a test SMS to verify your settings</p>
+                                <button class="btn btn-outline-secondary" id="testSms">
+                                    <i class="fas fa-mobile-alt me-2"></i> Send Test SMS
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <h2>Booking Confirmed! 🎉</h2>
-                    <p>Your cleaning service has been successfully confirmed</p>
-                    
-                    <div class="booking-info" style="margin: 30px 0;">
-                        <div class="info-item">
-                            <span>Date:</span>
-                            <span id="new-date">15/10/2023</span>
-                        </div>
-                        <div class="info-item">
-                            <span>Time:</span>
-                            <span id="new-time">14:00</span>
-                        </div>
-                        <div class="info-item">
-                            <span>Status:</span>
-                            <span class="status status-confirmed">Confirmed</span>
-                        </div>
-                    </div>
-                    
-                    <p>You will receive a confirmation email shortly</p>
-                    
-                    <button class="btn btn-primary" onclick="showLogin()">
-                        <i class="fas fa-home"></i> Return to Home
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Demo data
-        const appointments = {
-            "client@email.com": {
-                name: "Sarah Johnson",
-                address: "123 Main Street, Auckland",
-                date: "2023-10-15",
-                time: "14:00",
-                status: "pending"
-            },
-            "123456": {
-                name: "Michael Brown",
-                address: "456 Queen Street, Wellington",
-                date: "2023-10-16",
-                time: "10:00",
-                status: "confirmed"
-            }
-        };
-        
-        let currentAppointment = null;
-        
-        function checkAppointment() {
-            const email = document.getElementById('client-email').value;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const dashboardSection = document.getElementById('dashboard-section');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const registerLink = document.getElementById('registerLink');
+            const loginLink = document.getElementById('loginLink');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const clientName = document.getElementById('clientName');
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
+            const savePreferencesBtn = document.getElementById('savePreferences');
+            const testSmsBtn = document.getElementById('testSms');
             
-            if (appointments[email]) {
-                currentAppointment = appointments[email];
-                document.getElementById('client-name').textContent = currentAppointment.name;
-                document.getElementById('client-address').textContent = currentAppointment.address;
-                document.getElementById('current-date').textContent = formatDate(currentAppointment.date);
-                document.getElementById('current-time').textContent = currentAppointment.time;
+            // Calendar variables
+            let currentYear = 2025;
+            let currentMonth = 8; // September (0-indexed, so 8 = September)
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            
+            // Demo user data
+            const demoUser = {
+                email: 'customer@email.com',
+                password: '123456',
+                name: 'John Smith',
+                phone: '(555) 123-4567',
+                avatar: 'https://ui-avatars.com/api/?name=John+Smith&background=3498db&color=fff',
+                smsReminders: true
+            };
+            
+            // Sample booking history
+            const sampleBookings = [
+                { date: '2025-08-15', time: '10:00', type: 'Standard Cleaning', status: 'completed' },
+                { date: '2025-07-28', time: '14:30', type: 'Deep Cleaning', status: 'completed' },
+                { date: '2025-07-10', time: '09:00', type: 'Office Cleaning', status: 'completed' }
+            ];
+            
+            // Available time slots
+            const availableTimes = ['08:00', '09:30', '11:00', '13:30', '15:00', '16:30'];
+            
+            // Current user
+            let currentUser = null;
+            
+            // Event Listeners
+            registerLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginSection.classList.remove('active');
+                registerSection.classList.add('active');
+            });
+            
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerSection.classList.remove('active');
+                loginSection.classList.add('active');
+            });
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
                 
-                const statusElement = document.getElementById('current-status');
-                statusElement.textContent = currentAppointment.status === 'pending' ? 'Pending' : 'Confirmed';
-                statusElement.className = 'status ' + (currentAppointment.status === 'pending' ? 'status-pending' : 'status-confirmed');
+                // Demo authentication
+                if (email === demoUser.email && password === demoUser.password) {
+                    loginUser(demoUser);
+                } else {
+                    alert('Incorrect email or password. Please use the demo credentials.');
+                }
+            });
+            
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('regName').value;
+                const email = document.getElementById('regEmail').value;
+                const phone = document.getElementById('regPhone').value;
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                const smsReminders = document.getElementById('smsReminders').checked;
                 
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('appointment-details').classList.remove('hidden');
-            } else {
-                alert("Booking not found. Please check your email or booking code.");
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+                
+                const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3498db&color=fff`;
+                
+                const newUser = {
+                    email,
+                    password,
+                    name,
+                    phone,
+                    avatar,
+                    smsReminders
+                };
+                
+                loginUser(newUser);
+            });
+            
+            logoutBtn.addEventListener('click', function() {
+                loginSection.classList.add('active');
+                dashboardSection.classList.remove('active');
+                registerSection.classList.remove('active');
+                currentUser = null;
+            });
+            
+            savePreferencesBtn.addEventListener('click', function() {
+                if (currentUser) {
+                    currentUser.smsReminders = document.getElementById('sms-reminders').checked;
+                    currentUser.phone = document.getElementById('phoneNumber').value;
+                    alert('Notification preferences saved successfully!');
+                }
+            });
+            
+            testSmsBtn.addEventListener('click', function() {
+                if (currentUser) {
+                    // In a real app, this would call your backend to send an SMS
+                    alert(`Test SMS would be sent to ${currentUser.phone} with a reminder message.`);
+                    simulateSmsSending(currentUser.phone);
+                }
+            });
+            
+            // Calendar navigation
+            document.getElementById('prev-month').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar();
+            });
+            
+            document.getElementById('next-month').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar();
+            });
+            
+            // Functions
+            function loginUser(user) {
+                currentUser = user;
+                clientName.textContent = user.name;
+                userName.textContent = user.name;
+                userAvatar.src = user.avatar;
+                
+                // Update notification settings
+                document.getElementById('sms-reminders').checked = user.smsReminders;
+                document.getElementById('phoneNumber').value = user.phone;
+                
+                loginSection.classList.remove('active');
+                registerSection.classList.remove('active');
+                dashboardSection.classList.add('active');
+                
+                // Initialize calendar and history
+                renderCalendar();
+                renderBookingHistory();
             }
-        }
-        
-        function confirmAppointment() {
-            currentAppointment.status = 'confirmed';
-            const statusElement = document.getElementById('current-status');
-            statusElement.textContent = 'Confirmed';
-            statusElement.className = 'status status-confirmed';
             
-            document.getElementById('new-date').textContent = formatDate(currentAppointment.date);
-            document.getElementById('new-time').textContent = currentAppointment.time;
+            function renderCalendar() {
+                const calendarContainer = document.getElementById('calendar-container');
+                const currentMonthElement = document.getElementById('current-month');
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDay = firstDay.getDay();
+                
+                // Update month display
+                currentMonthElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                
+                // Calendar header
+                let calendarHTML = '';
+                for (let i = 0; i < 7; i++) {
+                    calendarHTML += `<div class="day-header">${dayNames[i]}</div>`;
+                }
+                
+                // Previous month days
+                const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+                for (let i = 0; i < startingDay; i++) {
+                    calendarHTML += `<div class="calendar-day other-month">${prevMonthLastDay - startingDay + i + 1}</div>`;
+                }
+                
+                // Current month days
+                const today = new Date();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const isToday = today.getDate() === i && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+                    calendarHTML += `
+                        <div class="calendar-day ${isToday ? 'current-day' : ''}" data-date="${currentYear}-${currentMonth + 1}-${i}">
+                            <div class="day-header">${i}</div>
+                    `;
+                    
+                    // Add sample bookings (in a real app, these would come from a database)
+                    if (i % 5 === 0) {
+                        calendarHTML += `<div class="time-slot time-booked">10:00 - Booked</div>`;
+                    }
+                    
+                    calendarHTML += `</div>`;
+                }
+                
+                // Next month days
+                const daysNeeded = 42 - (startingDay + daysInMonth); // 6 rows of 7 days
+                for (let i = 1; i <= daysNeeded; i++) {
+                    calendarHTML += `<div class="calendar-day other-month">${i}</div>`;
+                }
+                
+                calendarContainer.innerHTML = calendarHTML;
+                
+                // Add event listeners to calendar days
+                document.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
+                    day.addEventListener('click', function() {
+                        document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        const date = this.getAttribute('data-date');
+                        showTimeSlots(date);
+                    });
+                });
+                
+                // Render time slots
+                renderTimeSlots();
+            }
             
-            document.getElementById('appointment-details').classList.add('hidden');
-            document.getElementById('confirmation-section').classList.remove('hidden');
+            function renderTimeSlots() {
+                const timeSlotsContainer = document.getElementById('time-slots');
+                timeSlotsContainer.innerHTML = '';
+                
+                availableTimes.forEach(time => {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot time-available';
+                    timeSlot.textContent = time;
+                    timeSlot.setAttribute('data-time', time);
+                    
+                    timeSlot.addEventListener('click', function() {
+                        document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('time-selected'));
+                        this.classList.add('time-selected');
+                        
+                        const date = document.querySelector('.calendar-day.selected').getAttribute('data-date');
+                        const time = this.getAttribute('data-time');
+                        showBookingForm(date, time);
+                    });
+                    
+                    timeSlotsContainer.appendChild(timeSlot);
+                });
+            }
             
-            setTimeout(() => {
-                alert("✓ Confirmation email sent to your address!");
-            }, 1000);
-        }
-        
-        function showLogin() {
-            document.getElementById('confirmation-section').classList.add('hidden');
-            document.getElementById('appointment-details').classList.add('hidden');
-            document.getElementById('login-section').classList.remove('hidden');
+            function showTimeSlots(date) {
+                document.getElementById('booking-form').style.display = 'none';
+                document.getElementById('time-slots').style.display = 'flex';
+            }
             
-            document.getElementById('client-email').value = "";
-        }
-        
-        function formatDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            return `${day}/${month}/${year}`;
-        }
+            function showBookingForm(date, time) {
+                document.getElementById('booking-date').value = formatDate(date);
+                document.getElementById('booking-time').value = time;
+                document.getElementById('booking-form').style.display = 'block';
+            }
+            
+            function formatDate(dateString) {
+                const [year, month, day] = dateString.split('-');
+                return `${month}/${day}/${year}`;
+            }
+            
+            function renderBookingHistory() {
+                const historyContainer = document.getElementById('booking-history');
+                historyContainer.innerHTML = '';
+                
+                sampleBookings.forEach(booking => {
+                    const bookingItem = document.createElement('div');
+                    bookingItem.className = `booking-item booking-${booking.status}`;
+                    
+                    const [year, month, day] = booking.date.split('-');
+                    const formattedDate = `${month}/${day}/${year}`;
+                    
+                    bookingItem.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <h5>${booking.type}</h5>
+                            <span class="badge ${booking.status === 'completed' ? 'bg-success' : 'bg-warning'}">
+                                ${booking.status === 'completed' ? 'Completed' : 'Pending'}
+                            </span>
+                        </div>
+                        <p class="mb-1">Date: ${formattedDate} at ${booking.time}</p>
+                        <p class="mb-0">Rating: <span class="text-warning">★★★★★</span></p>
+                    `;
+                    
+                    historyContainer.appendChild(bookingItem);
+                });
+            }
+            
+            function simulateSmsSending(phoneNumber) {
+                // In a real application, this would be an API call to your backend
+                console.log(`SMS would be sent to: ${phoneNumber}`);
+                
+                // Simulate SMS content
+                const smsContent = `CLEANCONFIRM: Reminder - Your cleaning appointment is scheduled for tomorrow. Thank you for choosing our services!`;
+                console.log(`SMS content: ${smsContent}`);
+                
+                // Show success message to user
+                alert(`Test SMS sent successfully to ${phoneNumber}`);
+            }
+            
+            function scheduleSmsReminder(bookingDate, bookingTime, phoneNumber) {
+                // In a real application, this would schedule an SMS to be sent one day before the appointment
+                console.log(`SMS reminder scheduled for ${bookingDate} at ${bookingTime} to ${phoneNumber}`);
+                
+                // Calculate reminder date (one day before booking)
+                const [year, month, day] = bookingDate.split('-');
+                const reminderDate = new Date(year, month - 1, day - 1);
+                
+                console.log(`Reminder will be sent on: ${reminderDate.toDateString()}`);
+                
+                // This is where you would integrate with an SMS service like Twilio
+            }
+            
+            // Initialize the booking form submission
+            document.getElementById('confirmBookingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const date = document.getElementById('booking-date').value;
+                const time = document.getElementById('booking-time').value;
+                const notes = document.getElementById('booking-notes').value;
+                const smsReminder = document.getElementById('booking-sms-reminder').checked;
+                
+                alert(`Booking confirmed for ${date} at ${time}!\nSpecial instructions: ${notes || 'None'}`);
+                
+                // Schedule SMS reminder if requested
+                if (smsReminder && currentUser) {
+                    // Convert date back to YYYY-MM-DD format for processing
+                    const [month, day, year] = date.split('/');
+                    const formattedDate = `${year}-${month}-${day}`;
+                    
+                    scheduleSmsReminder(formattedDate, time, currentUser.phone);
+                }
+                
+                // Reset form
+                this.reset();
+                document.getElementById('booking-form').style.display = 'none';
+                document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('time-selected'));
+                document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            });
+            
+            // Initialize tab functionality
+            const triggerTabList = [].slice.call(document.querySelectorAll('#myTab button'));
+            triggerTabList.forEach(function (triggerEl) {
+                new bootstrap.Tab(triggerEl);
+            });
+        });
     </script>
 </body>
 </html>
