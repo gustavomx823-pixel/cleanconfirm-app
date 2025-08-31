@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,9 @@
             --accent-color: #e74c3c;
             --light-color: #ecf0f1;
             --dark-color: #34495e;
+            --cleaning-color: #3498db;
+            --maintenance-color: #2ecc71;
+            --inspection-color: #f39c12;
         }
         
         body {
@@ -30,6 +33,8 @@
             padding: 0;
             position: fixed;
             width: 250px;
+            z-index: 1000;
+            overflow-y: auto;
         }
         
         .sidebar-header {
@@ -47,6 +52,7 @@
             padding: 12px 20px;
             border-left: 4px solid transparent;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .sidebar-menu li:hover {
@@ -136,6 +142,11 @@
         .stats-card {
             text-align: center;
             padding: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
         }
         
         .stats-number {
@@ -159,6 +170,152 @@
             border-radius: 50%;
             margin-left: 10px;
         }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        /* Calendar Styles */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            min-height: 120px;
+            background-color: white;
+        }
+        
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .other-month {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .current-day {
+            background-color: #e8f4fc;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .calendar-event {
+            font-size: 0.75rem;
+            padding: 3px 6px;
+            border-radius: 3px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .event-cleaning {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--cleaning-color);
+        }
+        
+        .event-maintenance {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 3px solid var(--maintenance-color);
+        }
+        
+        .event-inspection {
+            background-color: rgba(243, 156, 18, 0.2);
+            border-left: 3px solid var(--inspection-color);
+        }
+        
+        .year-selector {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .year-btn {
+            margin: 0 10px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .year-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .month-selector {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .month-btn {
+            padding: 10px;
+            text-align: center;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .month-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .month-selector {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -168,19 +325,19 @@
             <p class="mb-0">Admin Panel</p>
         </div>
         <ul class="sidebar-menu">
-            <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="#"><i class="far fa-calendar-alt"></i> Calendar</a></li>
-            <li class="active"><a href="#"><i class="fas fa-users"></i> Clients</a></li>
-            <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
-            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            <li class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+            <li data-section="calendar"><i class="far fa-calendar-alt"></i> Calendar</li>
+            <li data-section="clients"><i class="fas fa-users"></i> Clients</li>
+            <li data-section="reports"><i class="fas fa-chart-bar"></i> Reports</li>
+            <li data-section="settings"><i class="fas fa-cog"></i> Settings</li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="header">
             <div class="welcome-message">
-                <h4>Clients Management</h4>
-                <p class="mb-0">Manage your cleaning bookings efficiently</p>
+                <h4 id="currentSection">Dashboard</h4>
+                <p class="mb-0" id="sectionDescription">Manage your cleaning bookings efficiently</p>
             </div>
             <div class="user-profile d-flex align-items-center">
                 <span>Admin User</span>
@@ -188,154 +345,342 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="stats-number">24</div>
-                    <div class="stats-label">Total Clients</div>
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="stats-number">24</div>
+                        <div class="stats-label">Total Clients</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="stats-number">12</div>
+                        <div class="stats-label">New This Month</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="stats-number">5</div>
+                        <div class="stats-label">Pending Actions</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="stats-number">94%</div>
+                        <div class="stats-label">Satisfaction Rate</div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="stats-number">12</div>
-                    <div class="stats-label">New This Month</div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Bookings</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">Maria Silva</h6>
+                                        <small class="text-muted">Basic Cleaning - Aug 20, 2023</small>
+                                    </div>
+                                    <span class="badge bg-success">Completed</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">João Santos</h6>
+                                        <small class="text-muted">Deep Cleaning - Aug 22, 2023</small>
+                                    </div>
+                                    <span class="badge bg-warning">Pending</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">Ana Costa</h6>
+                                        <small class="text-muted">Office Cleaning - Aug 25, 2023</small>
+                                    </div>
+                                    <span class="badge bg-primary">Scheduled</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="stats-number">5</div>
-                    <div class="stats-label">Pending Actions</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="stats-number">94%</div>
-                    <div class="stats-label">Satisfaction Rate</div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="showSection('clients')">
+                                    <i class="fas fa-plus-circle"></i> Add New Client
+                                </button>
+                                <button class="btn btn-secondary" onclick="showSection('calendar')">
+                                    <i class="far fa-calendar-plus"></i> Schedule Cleaning
+                                </button>
+                                <button class="btn btn-info">
+                                    <i class="fas fa-file-invoice"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Add New Client</h5>
-                <button class="btn btn-sm btn-outline-secondary" id="toggleForm">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-            <div class="card-body add-client-form" id="clientForm">
-                <form id="newClientForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="clientName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="clientName" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="clientEmail" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="clientEmail" required>
-                            </div>
-                        </div>
+        <!-- Calendar Section -->
+        <div class="content-section" id="calendar">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Cleaning Schedule Calendar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="calendar-nav">
+                        <button class="btn btn-sm btn-outline-secondary" id="prev-year">
+                            <i class="fas fa-chevron-left"></i> Previous Year
+                        </button>
+                        
+                        <h4 id="current-year-display">2025</h4>
+                        
+                        <button class="btn btn-sm btn-outline-secondary" id="next-year">
+                            Next Year <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="clientPhone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="clientPhone">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="clientAddress" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="clientAddress">
-                            </div>
-                        </div>
+                    
+                    <div class="year-selector">
+                        <div class="year-btn" data-year="2025">2025</div>
+                        <div class="year-btn" data-year="2026">2026</div>
+                        <div class="year-btn" data-year="2027">2027</div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="clientNotes" class="form-label">Notes</label>
-                                <textarea class="form-control" id="clientNotes" rows="2"></textarea>
-                            </div>
-                        </div>
+                    
+                    <div class="month-selector" id="month-selector">
+                        <!-- Months will be populated by JavaScript -->
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Client</button>
-                </form>
+                    
+                    <div id="calendar-container">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Client List</h5>
-                <div>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search clients..." id="searchInput">
+        <!-- Clients Section -->
+        <div class="content-section" id="clients">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Add New Client</h5>
+                    <button class="btn btn-sm btn-outline-secondary" id="toggleForm">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+                <div class="card-body add-client-form" id="clientForm">
+                    <form id="newClientForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="clientName" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="clientName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="clientEmail" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="clientEmail" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="clientPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="clientPhone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="clientAddress" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="clientAddress">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="clientNotes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="clientNotes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Client</button>
+                    </form>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Address</th>
-                                <th>Last Service</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="clientsTable">
-                            <tr>
-                                <td>Maria Silva</td>
-                                <td>maria.silva@example.com</td>
-                                <td>(11) 99999-9999</td>
-                                <td>Rua das Flores, 123</td>
-                                <td>15/08/2023</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                                <td class="client-actions">
-                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>João Santos</td>
-                                <td>joao.santos@example.com</td>
-                                <td>(11) 98888-8888</td>
-                                <td>Av. Paulista, 456</td>
-                                <td>10/08/2023</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                                <td class="client-actions">
-                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Ana Costa</td>
-                                <td>ana.costa@example.com</td>
-                                <td>(11) 97777-7777</td>
-                                <td>Rua Augusta, 789</td>
-                                <td>05/08/2023</td>
-                                <td><span class="badge bg-warning">Pending</span></td>
-                                <td class="client-actions">
-                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Client List</h5>
+                    <div>
+                        <input type="text" class="form-control form-control-sm" placeholder="Search clients..." id="searchInput">
+                    </div>
                 </div>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Last Service</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTable">
+                                <tr>
+                                    <td>Maria Silva</td>
+                                    <td>maria.silva@example.com</td>
+                                    <td>(11) 99999-9999</td>
+                                    <td>Rua das Flores, 123</td>
+                                    <td>15/08/2023</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td class="client-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>João Santos</td>
+                                    <td>joao.santos@example.com</td>
+                                    <td>(11) 98888-8888</td>
+                                    <td>Av. Paulista, 456</td>
+                                    <td>10/08/2023</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td class="client-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ana Costa</td>
+                                    <td>ana.costa@example.com</td>
+                                    <td>(11) 97777-7777</td>
+                                    <td>Rua Augusta, 789</td>
+                                    <td>05/08/2023</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td class="client-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="content-section" id="reports">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Cleaning Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Generate and view reports on your cleaning business performance.
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card stats-card">
+                                <div class="stats-number">R$ 5.240</div>
+                                <div class="stats-label">Revenue This Month</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card">
+                                <div class="stats-number">38</div>
+                                <div class="stats-label">Completed Services</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card">
+                                <div class="stats-number">94%</div>
+                                <div class="stats-label">Customer Satisfaction</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download Monthly Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="content-section" id="settings">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">System Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>General Settings</h5>
+                                <div class="mb-3">
+                                    <label for="companyName" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="companyName" value="CLEANCONFIRM">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="adminEmail" class="form-label">Admin Email</label>
+                                    <input type="email" class="form-control" id="adminEmail" value="admin@cleanconfirm.com">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Notification Settings</h5>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                    <label class="form-check-label" for="emailNotifications">Email Notifications</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="smsNotifications">
+                                    <label class="form-check-label" for="smsNotifications">SMS Notifications</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-toast toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header">
+            <strong class="me-auto">CLEANCONFIRM</strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Operation completed successfully!
         </div>
     </div>
 
@@ -347,6 +692,27 @@
             const clientFormSection = document.getElementById('clientForm');
             const searchInput = document.getElementById('searchInput');
             const clientsTable = document.getElementById('clientsTable');
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            const contentSections = document.querySelectorAll('.content-section');
+            const currentSectionTitle = document.getElementById('currentSection');
+            const currentSectionDescription = document.getElementById('sectionDescription');
+            const notificationToast = document.querySelector('.notification-toast');
+            
+            // Calendar variables
+            let currentYear = 2025;
+            let currentMonth = 8; // September (0-indexed, so 8 = September)
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            
+            // Initialize Bootstrap toast
+            const toast = new bootstrap.Toast(notificationToast);
+            
+            // Show notification function
+            function showNotification(message) {
+                const toastBody = notificationToast.querySelector('.toast-body');
+                toastBody.textContent = message;
+                toast.show();
+            }
             
             // Toggle form visibility
             toggleFormBtn.addEventListener('click', function() {
@@ -388,8 +754,8 @@
                 // Reset form
                 clientForm.reset();
                 
-                // Show success message (you could use a toast notification here)
-                alert('Client added successfully!');
+                // Show success notification
+                showNotification('Client added successfully!');
             });
             
             // Simple search functionality
@@ -408,6 +774,208 @@
                     }
                 }
             });
+            
+            // Menu navigation functionality
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    
+                    // Update menu active state
+                    menuItems.forEach(li => li.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show the corresponding section
+                    showSection(sectionId);
+                    
+                    // If calendar section is selected, initialize it
+                    if (sectionId === 'calendar') {
+                        initCalendar();
+                    }
+                });
+            });
+            
+            // Function to show a specific section
+            window.showSection = function(sectionId) {
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Update section title and description
+                updateSectionTitle(sectionId);
+                
+                // If calendar section is selected, initialize it
+                if (sectionId === 'calendar') {
+                    initCalendar();
+                }
+            };
+            
+            // Function to update section title and description
+            function updateSectionTitle(sectionId) {
+                const titles = {
+                    'dashboard': ['Dashboard', 'Manage your cleaning bookings efficiently'],
+                    'calendar': ['Calendar', 'View and manage your cleaning schedule'],
+                    'clients': ['Clients Management', 'Manage your clients and their information'],
+                    'reports': ['Reports', 'View and generate business reports'],
+                    'settings': ['Settings', 'Configure your system preferences']
+                };
+                
+                if (titles[sectionId]) {
+                    currentSectionTitle.textContent = titles[sectionId][0];
+                    currentSectionDescription.textContent = titles[sectionId][1];
+                }
+            }
+            
+            // Add event listeners to action buttons in the clients table
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('fa-trash')) {
+                    const row = e.target.closest('tr');
+                    const clientName = row.cells[0].textContent;
+                    
+                    if (confirm(`Are you sure you want to delete ${clientName}?`)) {
+                        row.remove();
+                        showNotification('Client deleted successfully!');
+                    }
+                }
+                
+                if (e.target.classList.contains('fa-edit')) {
+                    const row = e.target.closest('tr');
+                    const clientName = row.cells[0].textContent;
+                    showNotification(`Edit mode for ${clientName}. This feature would open a edit form.`);
+                }
+            });
+            
+            // Calendar functionality
+            function initCalendar() {
+                // Set up year selector
+                const yearButtons = document.querySelectorAll('.year-btn');
+                yearButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        yearButtons.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentYear = parseInt(this.getAttribute('data-year'));
+                        document.getElementById('current-year-display').textContent = currentYear;
+                        renderMonthSelector();
+                    });
+                });
+                
+                // Set up year navigation
+                document.getElementById('prev-year').addEventListener('click', function() {
+                    if (currentYear > 2025) {
+                        currentYear--;
+                        document.querySelector(`.year-btn[data-year="${currentYear}"]`).click();
+                    }
+                });
+                
+                document.getElementById('next-year').addEventListener('click', function() {
+                    if (currentYear < 2027) {
+                        currentYear++;
+                        document.querySelector(`.year-btn[data-year="${currentYear}"]`).click();
+                    }
+                });
+                
+                // Set initial year to 2025
+                document.querySelector('.year-btn[data-year="2025"]').classList.add('active');
+                
+                // Render month selector
+                renderMonthSelector();
+            }
+            
+            function renderMonthSelector() {
+                const monthSelector = document.getElementById('month-selector');
+                monthSelector.innerHTML = '';
+                
+                for (let i = 0; i < 12; i++) {
+                    const monthBtn = document.createElement('div');
+                    monthBtn.className = 'month-btn';
+                    if (currentYear === 2025 && i === 8) {
+                        monthBtn.classList.add('active'); // September 2025 is default
+                    }
+                    monthBtn.textContent = monthNames[i];
+                    monthBtn.setAttribute('data-month', i);
+                    
+                    monthBtn.addEventListener('click', function() {
+                        document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        currentMonth = parseInt(this.getAttribute('data-month'));
+                        renderCalendar();
+                    });
+                    
+                    monthSelector.appendChild(monthBtn);
+                }
+                
+                // Render calendar for the default month (September 2025)
+                if (currentYear === 2025) {
+                    currentMonth = 8; // September
+                    document.querySelector('.month-btn[data-month="8"]').classList.add('active');
+                }
+                renderCalendar();
+            }
+            
+            function renderCalendar() {
+                const calendarContainer = document.getElementById('calendar-container');
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDay = firstDay.getDay();
+                
+                // Calendar header
+                let calendarHTML = `
+                    <h4 class="text-center mb-3">${monthNames[currentMonth]} ${currentYear}</h4>
+                    <div class="calendar-grid">
+                        <div class="day-header">Sun</div>
+                        <div class="day-header">Mon</div>
+                        <div class="day-header">Tue</div>
+                        <div class="day-header">Wed</div>
+                        <div class="day-header">Thu</div>
+                        <div class="day-header">Fri</div>
+                        <div class="day-header">Sat</div>
+                `;
+                
+                // Previous month days
+                const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+                for (let i = 0; i < startingDay; i++) {
+                    calendarHTML += `<div class="calendar-day other-month">${prevMonthLastDay - startingDay + i + 1}</div>`;
+                }
+                
+                // Current month days
+                const today = new Date();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const isToday = today.getDate() === i && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+                    calendarHTML += `
+                        <div class="calendar-day ${isToday ? 'current-day' : ''}">
+                            <div class="day-header">${i}</div>
+                    `;
+                    
+                    // Add sample events (in a real app, these would come from a database)
+                    if (i % 5 === 0) {
+                        calendarHTML += `<div class="calendar-event event-cleaning">Cleaning: Maria Silva</div>`;
+                    }
+                    if (i % 7 === 0) {
+                        calendarHTML += `<div class="calendar-event event-maintenance">Maintenance: Office Building</div>`;
+                    }
+                    if (i % 9 === 0) {
+                        calendarHTML += `<div class="calendar-event event-inspection">Inspection: Shopping Mall</div>`;
+                    }
+                    
+                    calendarHTML += `</div>`;
+                }
+                
+                // Next month days
+                const daysNeeded = 42 - (startingDay + daysInMonth); // 6 rows of 7 days
+                for (let i = 1; i <= daysNeeded; i++) {
+                    calendarHTML += `<div class="calendar-day other-month">${i}</div>`;
+                }
+                
+                calendarHTML += `</div>`;
+                calendarContainer.innerHTML = calendarHTML;
+            }
+            
+            // Initialize the calendar when the page loads if we're on the calendar section
+            if (document.getElementById('calendar').classList.contains('active')) {
+                initCalendar();
+            }
         });
     </script>
 </body>
