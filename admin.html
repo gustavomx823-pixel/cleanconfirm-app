@@ -55,7 +55,9 @@
             transition: all 0.3s ease;
         }
         
-        .nav-btn:hover {
+        .nav-btn:hover, .nav-btn.active {
+            background: #4CAF50;
+            color: white;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
@@ -160,7 +162,7 @@
         
         .calendar-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
@@ -193,6 +195,14 @@
             margin: 2px;
         }
         
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             .admin-nav {
                 flex-direction: column;
@@ -216,188 +226,259 @@
         </header>
 
         <div class="admin-nav">
-            <button class="nav-btn"><i class="fas fa-home"></i> Dashboard</button>
-            <button class="nav-btn"><i class="fas fa-calendar-alt"></i> Calendar</button>
-            <button class="nav-btn"><i class="fas fa-users"></i> Clients</button>
-            <button class="nav-btn"><i class="fas fa-chart-bar"></i> Reports</button>
-            <button class="nav-btn"><i class="fas fa-cog"></i> Settings</button>
+            <button class="nav-btn active" onclick="showTab('dashboard')"><i class="fas fa-home"></i> Dashboard</button>
+            <button class="nav-btn" onclick="showTab('calendar')"><i class="fas fa-calendar-alt"></i> Calendar</button>
+            <button class="nav-btn" onclick="showTab('clients')"><i class="fas fa-users"></i> Clients</button>
+            <button class="nav-btn" onclick="showTab('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
+            <button class="nav-btn" onclick="showTab('settings')"><i class="fas fa-cog"></i> Settings</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-calendar-check" style="font-size: 2em; color: #4caf50;"></i>
-                <h3>Total Bookings</h3>
-                <div class="stat-number">47</div>
-                <p>This month</p>
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check" style="font-size: 2em; color: #4caf50;"></i>
+                    <h3>Total Bookings</h3>
+                    <div class="stat-number">47</div>
+                    <p>This month</p>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-user-clock" style="font-size: 2em; color: #ff9800;"></i>
+                    <h3>Pending</h3>
+                    <div class="stat-number">12</div>
+                    <p>Needs confirmation</p>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-check-circle" style="font-size: 2em; color: #2196f3;"></i>
+                    <h3>Confirmed</h3>
+                    <div class="stat-number">28</div>
+                    <p>Scheduled</p>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-dollar-sign" style="font-size: 2em; color: #4caf50;"></i>
+                    <h3>Revenue</h3>
+                    <div class="stat-number">$2,840</div>
+                    <p>This month</p>
+                </div>
             </div>
-            
-            <div class="stat-card">
-                <i class="fas fa-user-clock" style="font-size: 2em; color: #ff9800;"></i>
-                <h3>Pending</h3>
-                <div class="stat-number">12</div>
-                <p>Needs confirmation</p>
-            </div>
-            
-            <div class="stat-card">
-                <i class="fas fa-check-circle" style="font-size: 2em; color: #2196f3;"></i>
-                <h3>Confirmed</h3>
-                <div class="stat-number">28</div>
-                <p>Scheduled</p>
-            </div>
-            
-            <div class="stat-card">
-                <i class="fas fa-dollar-sign" style="font-size: 2em; color: #4caf50;"></i>
-                <h3>Revenue</h3>
-                <div class="stat-number">$2,840</div>
-                <p>This month</p>
+
+            <div class="bookings-table">
+                <h2><i class="fas fa-list"></i> Recent Bookings</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>Deep Cleaning</td>
+                            <td>Oct 15, 2023 - 14:00</td>
+                            <td>123 Main St, Auckland</td>
+                            <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="editBooking(1)"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn btn-complete" onclick="completeBooking(1)"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Michael Brown</td>
+                            <td>Regular Cleaning</td>
+                            <td>Oct 16, 2023 - 10:00</td>
+                            <td>456 Queen St, Wellington</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="editBooking(2)"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn btn-complete" onclick="completeBooking(2)"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Emma Wilson</td>
+                            <td>Office Cleaning</td>
+                            <td>Oct 17, 2023 - 09:00</td>
+                            <td>789 Victoria St, Christchurch</td>
+                            <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="editBooking(3)"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn btn-complete" onclick="completeBooking(3)"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>James Taylor</td>
+                            <td>Move-out Cleaning</td>
+                            <td>Oct 18, 2023 - 13:00</td>
+                            <td>321 Beach Rd, Hamilton</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="editBooking(4)"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn btn-delete" onclick="deleteBooking(4)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="bookings-table">
-            <h2><i class="fas fa-list"></i> Recent Bookings</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client</th>
-                        <th>Service</th>
-                        <th>Date & Time</th>
-                        <th>Address</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Sarah Johnson</td>
-                        <td>Deep Cleaning</td>
-                        <td>Oct 15, 2023 - 14:00</td>
-                        <td>123 Main St, Auckland</td>
-                        <td><span class="status-badge status-confirmed">Confirmed</span></td>
-                        <td>
-                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-complete"><i class="fas fa-check"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Michael Brown</td>
-                        <td>Regular Cleaning</td>
-                        <td>Oct 16, 2023 - 10:00</td>
-                        <td>456 Queen St, Wellington</td>
-                        <td><span class="status-badge status-pending">Pending</span></td>
-                        <td>
-                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-complete"><i class="fas fa-check"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Emma Wilson</td>
-                        <td>Office Cleaning</td>
-                        <td>Oct 17, 2023 - 09:00</td>
-                        <td>789 Victoria St, Christchurch</td>
-                        <td><span class="status-badge status-confirmed">Confirmed</span></td>
-                        <td>
-                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-complete"><i class="fas fa-check"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>James Taylor</td>
-                        <td>Move-out Cleaning</td>
-                        <td>Oct 18, 2023 - 13:00</td>
-                        <td>321 Beach Rd, Hamilton</td>
-                        <td><span class="status-badge status-completed">Completed</span></td>
-                        <td>
-                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="calendar-view">
-            <div class="calendar-header">
-                <h2><i class="fas fa-calendar"></i> October 2023</h2>
-                <div>
-                    <button class="action-btn"><i class="fas fa-chevron-left"></i></button>
-                    <button class="action-btn"><i class="fas fa-chevron-right"></i></button>
+        <!-- CALENDAR TAB -->
+        <div id="calendar" class="tab-content">
+            <div class="calendar-view">
+                <div class="calendar-header">
+                    <h2><i class="fas fa-calendar"></i> October 2023</h2>
+                    <div>
+                        <button class="action-btn" onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
+                        <button class="action-btn" onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid">
+                    <div class="calendar-day">
+                        <div class="day-header">Sun</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Mon</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Tue</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Wed</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Thu</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Fri</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">Sat</div>
+                    </div>
+                    
+                    <!-- Empty days -->
+                    <div class="calendar-day"></div>
+                    <div class="calendar-day"></div>
+                    
+                    <!-- October days with bookings -->
+                    <div class="calendar-day">
+                        <div class="day-header">1</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">2</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">3</div>
+                    </div>
+                    <div class="calendar-day">
+                        <div class="day-header">4</div>
+                        <span class="booking-dot"></span>
+                    </div>
+                    
+                    <!-- Continue for all days of October -->
+                    <div class="calendar-day">
+                        <div class="day-header">15</div>
+                        <span class="booking-dot"></span>
+                        <span class="booking-dot" style="background: #ff9800;"></span>
+                    </div>
+                    
+                    <!-- Add more days as needed -->
                 </div>
             </div>
-            
-            <div class="calendar-grid">
-                <div class="calendar-day">
-                    <div class="day-header">Sun</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Mon</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Tue</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Wed</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Thu</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Fri</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">Sat</div>
-                </div>
-                
-                <!-- Empty days -->
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                
-                <!-- October days with bookings -->
-                <div class="calendar-day">
-                    <div class="day-header">1</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">2</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">3</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-header">4</div>
-                    <span class="booking-dot"></span>
-                </div>
-                
-                <!-- Continue for all days of October -->
-                <div class="calendar-day">
-                    <div class="day-header">15</div>
-                    <span class="booking-dot"></span>
-                    <span class="booking-dot" style="background: #ff9800;"></span>
-                </div>
-                
-                <!-- Add more days as needed -->
+        </div>
+
+        <!-- OTHER TABS (Placeholder content) -->
+        <div id="clients" class="tab-content">
+            <div class="stat-card">
+                <h2><i class="fas fa-users"></i> Clients Management</h2>
+                <p>Client list and management features will be here.</p>
+            </div>
+        </div>
+
+        <div id="reports" class="tab-content">
+            <div class="stat-card">
+                <h2><i class="fas fa-chart-bar"></i> Reports & Analytics</h2>
+                <p>Financial reports and analytics will be here.</p>
+            </div>
+        </div>
+
+        <div id="settings" class="tab-content">
+            <div class="stat-card">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <p>System settings and configuration will be here.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple admin functionality
-        document.querySelectorAll('.btn-complete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const statusCell = row.querySelector('.status-badge');
-                statusCell.textContent = 'Completed';
-                statusCell.className = 'status-badge status-completed';
-                alert('Booking marked as completed!');
+        // Tab navigation functionality
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
-        });
-        
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to delete this booking?')) {
-                    const row = this.closest('tr');
-                    row.style.opacity = '0.3';
-                    alert('Booking deleted!');
-                }
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update active button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
+            event.target.classList.add('active');
+        }
+
+        // Booking management functions
+        function editBooking(bookingId) {
+            alert('Editing booking #' + bookingId + '\nEdit feature will be implemented here.');
+        }
+
+        function completeBooking(bookingId) {
+            const row = event.target.closest('tr');
+            const statusCell = row.querySelector('.status-badge');
+            statusCell.textContent = 'Completed';
+            statusCell.className = 'status-badge status-completed';
+            alert('Booking #' + bookingId + ' marked as completed!');
+            
+            // Update statistics
+            updateStats();
+        }
+
+        function deleteBooking(bookingId) {
+            if (confirm('Are you sure you want to delete booking #' + bookingId + '?')) {
+                const row = event.target.closest('tr');
+                row.style.opacity = '0.3';
+                row.style.textDecoration = 'line-through';
+                alert('Booking #' + bookingId + ' deleted!');
+                
+                // Update statistics
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            // This would update statistics in a real application
+            console.log('Stats updated');
+        }
+
+        // Calendar navigation
+        function prevMonth() {
+            alert('Showing previous month\nCalendar navigation will be implemented here.');
+        }
+
+        function nextMonth() {
+            alert('Showing next month\nCalendar navigation will be implemented here.');
+        }
+
+        // Initialize with first tab active
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('dashboard');
         });
     </script>
 </body>
